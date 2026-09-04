@@ -2,35 +2,46 @@ import { Suspense } from "react";
 
 import { PageShell } from "@/components/layout/page-shell";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
-import { DeviceToolbar } from "@/components/devices/device-toolbar";
-import { DeviceList } from "@/components/devices/device-list";
-import { DeviceListSkeleton } from "@/components/devices/device-list-skeleton";
-import { AddDeviceModal } from "@/components/devices/add-device-modal";
-import { DeleteDeviceDialog } from "@/components/devices/delete-device-dialog";
-import { Toaster } from "@/components/ui/toaster";
-import { parseDeviceQuery } from "@/lib/utils/parse-device-query";
+import { FleetStatTiles } from "@/components/devices/fleet-stat-tiles";
+import { FleetUptimeCard } from "@/components/devices/fleet-uptime-card";
+import { StatusDistributionCard } from "@/components/devices/status-distribution-card";
+import { AttentionCard } from "@/components/devices/attention-card";
+import { LatencyCard } from "@/components/devices/latency-card";
+import { OverviewSkeleton } from "@/components/devices/overview-skeleton";
+import { listDevices } from "@/lib/server/device-repository";
+import { getFleetStats } from "@/lib/utils/device-stats";
 
-export default async function Page(props: PageProps<"/">) {
-  const query = parseDeviceQuery(await props.searchParams);
+async function OverviewContent() {
+  const { devices } = await listDevices({ search: "", status: "All" });
+  const stats = getFleetStats(devices);
 
+  return (
+    <>
+      <FleetStatTiles stats={stats} />
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <FleetUptimeCard stats={stats} />
+        <StatusDistributionCard stats={stats} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <AttentionCard devices={stats.needsAttention} />
+        <LatencyCard devices={devices} />
+      </div>
+    </>
+  );
+}
+
+export default function Page() {
   return (
     <PageShell>
       <DashboardHeader
-        title="Device Manager"
-        subtitle="Monitor and manage your network devices"
+        title="Overview"
+        subtitle="Fleet health at a glance, from the latest reported device data"
       />
-
-      <Suspense>
-        <DeviceToolbar />
+      <Suspense fallback={<OverviewSkeleton />}>
+        <OverviewContent />
       </Suspense>
-
-      <Suspense key={`${query.search}|${query.status}`} fallback={<DeviceListSkeleton />}>
-        <DeviceList query={query} />
-      </Suspense>
-
-      <AddDeviceModal />
-      <DeleteDeviceDialog />
-      <Toaster />
     </PageShell>
   );
 }

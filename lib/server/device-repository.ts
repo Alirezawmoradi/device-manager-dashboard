@@ -4,6 +4,8 @@ import { randomUUID } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import { connection } from "next/server";
+
 import { devicesFileSchema } from "@/lib/schemas/device";
 import type { CreateDeviceInput, Device, DeviceQuery } from "@/lib/types/device";
 
@@ -37,6 +39,11 @@ export type ListDevicesResult = {
 };
 
 export async function listDevices(query: DeviceQuery): Promise<ListDevicesResult> {
+  // `data/devices.json` is mutable at runtime, but reading it would otherwise
+  // complete during prerendering and freeze the page at its build-time
+  // contents. Waiting for a connection keeps every reader request-time, so a
+  // page that doesn't happen to touch searchParams still sees fresh data.
+  await connection();
   await sleep(MOCK_LATENCY_MS);
 
   const all = await readDevices();
@@ -74,8 +81,14 @@ export async function createDevice(input: CreateDeviceInput): Promise<CreateDevi
     id: randomUUID(),
     name: input.name,
     ip: input.ip,
+    type: input.type,
     status: input.status,
     lastPing: new Date().toISOString(),
+    // A device that has just been registered has no monitoring history yet:
+    // it has never been unreachable, and no pings have completed. The UI
+    // renders these empty states rather than inventing a trend line.
+    uptime: input.status === "Offline" ? 0 : 100,
+    latency: [],
   };
 
   await writeDevices([device, ...devices]);

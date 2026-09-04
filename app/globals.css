@@ -29,6 +29,21 @@
   --color-status-offline: #fb7185;
   --color-status-offline-glow: rgba(251, 113, 133, 0.45);
 
+  /*
+   * Chart fills. Same hue families as the status colors above, stepped into the
+   * dark-surface lightness band (OKLCH L 0.48-0.67) so large filled areas — donut
+   * segments, meter fills, area washes — sit harmoniously on the canvas instead of
+   * glaring. The brighter status steps stay reserved for small marks (8px dots),
+   * where saturation reads as an accent rather than a block.
+   */
+  --color-online-fill: #059669;
+  --color-online-track: rgba(5, 150, 105, 0.18);
+  --color-warning-fill: #d97706;
+  --color-warning-track: rgba(217, 119, 6, 0.18);
+  --color-offline-fill: #e11d48;
+  --color-offline-track: rgba(225, 29, 72, 0.18);
+  --color-accent-track: rgba(79, 127, 255, 0.18);
+
   /* Danger */
   --color-danger: #f87171;
   --color-danger-hover: #fb9494;
@@ -56,6 +71,14 @@
   --color-warning-glow: var(--color-status-warning-glow);
   --color-offline: var(--color-status-offline);
   --color-offline-glow: var(--color-status-offline-glow);
+
+  --color-online-fill: var(--color-online-fill);
+  --color-online-track: var(--color-online-track);
+  --color-warning-fill: var(--color-warning-fill);
+  --color-warning-track: var(--color-warning-track);
+  --color-offline-fill: var(--color-offline-fill);
+  --color-offline-track: var(--color-offline-track);
+  --color-accent-track: var(--color-accent-track);
 
   --color-danger: var(--color-danger);
   --color-danger-hover: var(--color-danger-hover);

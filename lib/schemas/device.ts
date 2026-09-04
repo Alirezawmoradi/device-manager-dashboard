@@ -11,13 +11,31 @@ const IPV4_PATTERN =
 
 export const deviceStatusSchema = z.enum(["Online", "Offline", "Warning"]);
 
+export const deviceTypeSchema = z.enum([
+  "Switch",
+  "Router",
+  "Server",
+  "Storage",
+  "Access Point",
+  "Camera",
+]);
+
 export const deviceSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   ip: z.string().regex(IPV4_PATTERN),
+  type: deviceTypeSchema,
   status: deviceStatusSchema,
   /** ISO-8601 instant of the last successful ping. */
   lastPing: z.string().min(1),
+  /** Percentage of the monitoring window the device was reachable. */
+  uptime: z.number().min(0).max(100),
+  /**
+   * Round-trip times in milliseconds for the most recent successful pings,
+   * oldest first. Empty when a device has no successful pings to report —
+   * either it was just added, or it is currently unreachable.
+   */
+  latency: z.array(z.number().nonnegative()),
 });
 
 /** Shape of `data/devices.json` as a whole. */
@@ -35,6 +53,7 @@ export const createDeviceSchema = z.object({
     .trim()
     .min(1, "IP address is required")
     .regex(IPV4_PATTERN, "Enter a valid IPv4 address (e.g. 192.168.1.1)"),
+  type: deviceTypeSchema,
   status: deviceStatusSchema,
 });
 

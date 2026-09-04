@@ -27,7 +27,7 @@ export async function DeviceList({ query }: DeviceListProps) {
   return (
     <>
       <DeviceTable devices={devices} />
-      <div className="flex flex-col gap-2 md:hidden">
+      <div className="flex flex-col gap-3 lg:hidden">
         {devices.map((device) => (
           <DeviceCard key={device.id} device={device} />
         ))}
