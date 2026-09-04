@@ -4,11 +4,13 @@ import type {
   deviceQuerySchema,
   deviceSchema,
   deviceStatusSchema,
+  deviceTypeSchema,
   statusFilterSchema,
 } from "@/lib/schemas/device";
 
 export type Device = z.infer<typeof deviceSchema>;
 export type DeviceStatus = z.infer<typeof deviceStatusSchema>;
+export type DeviceType = z.infer<typeof deviceTypeSchema>;
 export type StatusFilter = z.infer<typeof statusFilterSchema>;
 export type DeviceQuery = z.infer<typeof deviceQuerySchema>;
 export type CreateDeviceInput = z.infer<typeof createDeviceSchema>;
