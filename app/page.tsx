@@ -1,9 +1,32 @@
-import Image from "next/image";
+import { Suspense } from "react";
 
-export default function Home() {
+import { PageShell } from "@/components/layout/page-shell";
+import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { DeviceToolbar } from "@/components/devices/device-toolbar";
+import { DeviceList } from "@/components/devices/device-list";
+import { DeviceListSkeleton } from "@/components/devices/device-list-skeleton";
+import { Toaster } from "@/components/ui/toaster";
+import { parseDeviceQuery } from "@/lib/utils/parse-device-query";
+
+export default async function Page(props: PageProps<"/">) {
+  const query = parseDeviceQuery(await props.searchParams);
+
   return (
-    <div className="flex w-full min-h-screen text-gray-900 bg-white items-center justify-center">
-      Device manager Dashboard
-    </div>
+    <PageShell>
+      <DashboardHeader
+        title="Device Manager"
+        subtitle="Monitor and manage your network devices"
+      />
+
+      <Suspense>
+        <DeviceToolbar />
+      </Suspense>
+
+      <Suspense key={`${query.search}|${query.status}`} fallback={<DeviceListSkeleton />}>
+        <DeviceList query={query} />
+      </Suspense>
+
+      <Toaster />
+    </PageShell>
   );
 }
