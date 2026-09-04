@@ -12,12 +12,18 @@ type StatusDotProps = {
   className?: string;
 };
 
-/** A small glowing dot signalling device status — the "control room" motif. */
+/**
+ * A small glowing dot signalling device status. Online devices pulse with
+ * Tailwind's built-in `animate-ping` — a literal nod to the device being
+ * actively pinged, and the only motion in this UI.
+ */
 export function StatusDot({ status, className }: StatusDotProps) {
   return (
-    <span
-      aria-hidden
-      className={cn("inline-block size-2 rounded-full", STATUS_CLASSES[status], className)}
-    />
+    <span aria-hidden className={cn("relative inline-flex size-2", className)}>
+      {status === "Online" ? (
+        <span className="absolute inset-0 rounded-full bg-online opacity-75 motion-safe:animate-ping" />
+      ) : null}
+      <span className={cn("relative inline-block size-2 rounded-full", STATUS_CLASSES[status])} />
+    </span>
   );
 }
