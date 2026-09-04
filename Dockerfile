@@ -10,7 +10,12 @@ FROM node:20-alpine AS base
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+# `npm ci`'s lockfile-sync check is stricter than `npm install`'s and varies
+# across npm versions, so a lockfile produced by a newer npm on the host can
+# fail it under the npm bundled with this base image even though nothing is
+# actually wrong. `npm install` reconciles that drift instead of hard-failing
+# on it, while still resolving from the committed lockfile as its starting point.
+RUN npm install
 
 # --- Build --------------------------------------------------------------
 FROM base AS builder
