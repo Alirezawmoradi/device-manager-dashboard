@@ -18,6 +18,14 @@ docker run --rm -p 3000:3000 device-manager-dashboard
 
 Open http://localhost:3000.
 
+`-p 3000:3000` maps *host* port 3000 to the container's port 3000 — the
+container always listens on 3000 internally (`PORT` below), but the host
+side is just a normal port mapping and can be anything free, e.g.
+`-p 8080:3000`. If another app on the host already owns port 3000 (as
+`docker-compose.yml` in this repo assumes — it maps to host port 3001
+instead), pick a different host port and point your reverse proxy at that
+one.
+
 ## Data persistence
 
 This app's "database" is `data/devices.json` — the repository reads and
