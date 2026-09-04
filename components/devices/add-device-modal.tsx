@@ -9,15 +9,18 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { createDeviceAction } from "@/app/actions/device-actions";
-import { createDeviceSchema } from "@/lib/schemas/device";
+import { createDeviceSchema, deviceTypeSchema } from "@/lib/schemas/device";
 import { useDeviceUiStore } from "@/store/use-device-ui-store";
 import type { CreateDeviceInput } from "@/lib/types/device";
 
 const DEFAULT_VALUES: CreateDeviceInput = {
   name: "",
   ip: "",
+  type: "Switch",
   status: "Online",
 };
+
+const DEVICE_TYPES = deviceTypeSchema.options;
 
 export function AddDeviceModal() {
   const isOpen = useDeviceUiStore((state) => state.isAddModalOpen);
@@ -86,6 +89,16 @@ export function AddDeviceModal() {
             autoComplete="off"
             spellCheck={false}
           />
+        </FormField>
+
+        <FormField label="Device type" error={errors.type?.message}>
+          <Select {...register("type")} hasError={Boolean(errors.type)}>
+            {DEVICE_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </Select>
         </FormField>
 
         <FormField label="Initial status" error={errors.status?.message}>
