@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persists data/devices.json across container restarts. See the "Data
+      # persistence" section in DOCKER.md.
+      - device-data:/app/data
+
+volumes:
+  device-data:
