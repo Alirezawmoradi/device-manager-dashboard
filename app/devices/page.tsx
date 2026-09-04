@@ -1,0 +1,36 @@
+import { Suspense } from "react";
+
+import { PageShell } from "@/components/layout/page-shell";
+import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { DeviceToolbar } from "@/components/devices/device-toolbar";
+import { DeviceList } from "@/components/devices/device-list";
+import { DeviceListSkeleton } from "@/components/devices/device-list-skeleton";
+import { AddDeviceModal } from "@/components/devices/add-device-modal";
+import { DeleteDeviceDialog } from "@/components/devices/delete-device-dialog";
+import { Toaster } from "@/components/ui/toaster";
+import { parseDeviceQuery } from "@/lib/utils/parse-device-query";
+
+export default async function Page(props: PageProps<"/devices">) {
+  const query = parseDeviceQuery(await props.searchParams);
+
+  return (
+    <PageShell>
+      <DashboardHeader
+        title="Devices"
+        subtitle="Search, filter, and manage every device on the network"
+      />
+
+      <Suspense>
+        <DeviceToolbar />
+      </Suspense>
+
+      <Suspense key={`${query.search}|${query.status}`} fallback={<DeviceListSkeleton />}>
+        <DeviceList query={query} />
+      </Suspense>
+
+      <AddDeviceModal />
+      <DeleteDeviceDialog />
+      <Toaster />
+    </PageShell>
+  );
+}
